@@ -25,23 +25,36 @@ class Search extends Component {
   }
 
   searchBooks = (query) => {
-    BooksAPI.search(query)
-      .then(response => {
-        let books;
+    // Search results are not shown when all of the text is deleted out of
+    // the search input box.
+    if(query === '') {
 
-        response.error ? books = [] : books = response
+      this.setState({
+        matchedBooks: []
+      })
+    } else { // Search are not empty, we can search :)
+      BooksAPI.search(query)
+        .then(response => {
+          let books;
 
-        // Adjust category for books in my bookshelf
-        books = books.map((book) => {
-          book.shelf = this.getCurrentCategory(book)
-          return book
-        })
+          response.error ? books = [] : books = response
 
-        this.setState({
-          query: query,
-          matchedBooks: books
-        })
-      }).catch(err => console.log(err))
+          // Adjust category for books in my bookshelf
+          books = books.map((book) => {
+            book.shelf = this.getCurrentCategory(book)
+            return book
+          })
+
+          this.setState({
+            query: query,
+            matchedBooks: books
+          })
+        }).catch(err => console.log(err))
+    }
+
+
+
+
   }
 
   render() {
